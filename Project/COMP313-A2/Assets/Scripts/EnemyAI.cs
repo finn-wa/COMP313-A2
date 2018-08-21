@@ -5,19 +5,18 @@ using UnityEngine.Events;
 using UnityEngine.AI;
 using Panda;
 
-public class HostileEnemyTasks : MonoBehaviour
+public class EnemyAI : MonoBehaviour
 {
     public bool paused = true;
     public Transform player;
     public float range = 6.5f;
-    public float walkSpeed = 5;
-    public float runSpeed = 8;
+    public float patrolSpeed = 5;
+    public float chaseSpeed = 8;
     public float fieldOfVision = 60;
     public Transform[] patrolPoints;
     public UnityEvent attack;
     NavMeshAgent agent;
     Transform agentTransform;
-    Animator animator;
     float requiredProximity = 0.25f;
     float timerEndsAt = 0f;
 
@@ -26,14 +25,8 @@ public class HostileEnemyTasks : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updatePosition = true;
         agent.updateRotation = true;
-        agent.speed = walkSpeed;
+        agent.speed = patrolSpeed;
         agentTransform = GetComponent<Transform>();
-        animator = GetComponent<Animator>();
-    }
-
-    void Update()
-    {
-        animator.SetFloat("Forward", agent.desiredVelocity.magnitude, 0.1f, Time.deltaTime);
     }
 
     [Task]
@@ -93,7 +86,7 @@ public class HostileEnemyTasks : MonoBehaviour
     [Task]
     void Follow()
     {
-        agent.speed = walkSpeed;
+        agent.speed = patrolSpeed;
         agent.SetDestination(player.position);
         Task.current.Succeed();
     }
@@ -101,7 +94,7 @@ public class HostileEnemyTasks : MonoBehaviour
     [Task]
     void Chase()
     {
-        agent.speed = runSpeed;
+        agent.speed = chaseSpeed;
         agent.SetDestination(player.position);
         Task.current.Succeed();
     }
@@ -142,7 +135,6 @@ public class HostileEnemyTasks : MonoBehaviour
     void Die()
     {
         agent.isStopped = true;
-        animator.SetTrigger("DeathTrigger");
         Task.current.Succeed();
     }
 
