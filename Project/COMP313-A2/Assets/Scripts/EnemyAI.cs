@@ -15,6 +15,8 @@ public class EnemyAI : MonoBehaviour
     public float fieldOfVision = 60;
     public Transform[] patrolPoints;
     public UnityEvent attack;
+    public UnityEvent redLight;
+    public UnityEvent blueLight;
     NavMeshAgent agent;
     Transform agentTransform;
     float requiredProximity = 0.25f;
@@ -128,6 +130,20 @@ public class EnemyAI : MonoBehaviour
     void Attack()
     {
         attack.Invoke();
+        Task.current.Succeed();
+    }
+
+    [Task]
+    void RedLight()
+    {
+        redLight.Invoke();
+        Task.current.Succeed();
+    }
+
+    [Task]
+    void BlueLight()
+    {
+        blueLight.Invoke();
         Task.current.Succeed();
     }
 

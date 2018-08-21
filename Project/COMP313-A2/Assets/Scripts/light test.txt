@@ -1,0 +1,7 @@
+tree("Root")
+	fallback
+		sequence
+			InSight()
+			InRange()
+			RedLight()
+		BlueLight()
