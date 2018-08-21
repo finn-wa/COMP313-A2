@@ -1,16 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.AI;
 using Panda;
 
 public class EnemyTasks : MonoBehaviour
 {
-    public bool paused = true;
+    public bool paused = false;
     public Transform player;
-    public float patrolSpeed = 10;
+    public float range = 6.5f;
+    public float patrolSpeed = 5;
+    public float chaseSpeed = 8;
+    public float fieldOfVision = 60;
     public Transform[] patrolPoints;
+    public UnityEvent attack;
+    public UnityEvent redLight;
+    public UnityEvent blueLight;
     NavMeshAgent agent;
+    Transform agentTransform;
+    float timerEndsAt = 0f;
+    int currentIndex = 0;
     float requiredProximity = 0.25f;
 
     void Start()
@@ -19,11 +29,7 @@ public class EnemyTasks : MonoBehaviour
         agent.updatePosition = true;
         agent.updateRotation = true;
         agent.speed = patrolSpeed;
-    }
-
-    void Update()
-    {
-        //animator.SetFloat("Forward", agent.desiredVelocity.magnitude, 0.1f, Time.deltaTime);
+        agentTransform = GetComponent<Transform>();
     }
 
     [Task]
@@ -32,36 +38,106 @@ public class EnemyTasks : MonoBehaviour
         return paused;
     }
 
-    /*
-     * Move to the destination
-     */
     [Task]
-    void MoveToPatrolPoint(int pointIndex)
+    void SetTimer(float t)
     {
-        if (agent != null)
-        {
-            agent.SetDestination(patrolPoints[pointIndex].position);
-            WaitArrival();
-        }
+        timerEndsAt = Time.time + t;
+        Task.current.Succeed();
+    }
+
+    // Returns true if there is at least t time remaining
+    [Task]
+    bool TimeRemaining(float t)
+    {
+        return (timerEndsAt - Time.time) >= t;
     }
 
     [Task]
-    public void WaitArrival()
+    bool TimerFinished()
     {
-        var task = Task.current;
-        float d = agent.remainingDistance;
-        if (agent.velocity.magnitude < 2f && d < 4.5f && !task.isStarting)
-        {
-            task.Fail();
-        }
-        if (!task.isStarting && d < requiredProximity)
-        {
-            task.Succeed();
-            d = 0.0f;
-        }
+        return timerEndsAt <= Time.time;
+    }
 
-        if (Task.isInspected)
-            task.debugInfo = string.Format("d-{0:0.00}", d);
+    //Sets destination and then immediately succeeds
+    [Task]
+    void MoveToNextPoint()
+    {
+        if (currentIndex >= patrolPoints.Length)
+        {
+            currentIndex = 0;
+        }
+        agent.SetDestination(patrolPoints[currentIndex].position);
+        currentIndex++;
+        Task.current.Succeed();
+
+    }
+
+    [Task]
+    bool HasArrived()
+    {
+        return agent.remainingDistance < requiredProximity;
+    }
+
+    [Task]
+    void Follow()
+    {
+        agent.speed = patrolSpeed;
+        agent.SetDestination(player.position);
+        Task.current.Succeed();
+    }
+
+    [Task]
+    void Chase()
+    {
+        agent.speed = chaseSpeed;
+        agent.SetDestination(player.position);
+        Task.current.Succeed();
+    }
+
+    [Task]
+    bool InRange()
+    {
+        return range >= Vector3.Distance(agentTransform.position, player.position);
+    }
+
+    [Task]
+    bool InSight()
+    {
+        Vector3 targetDir = player.position - agentTransform.position;
+        float angle = Vector3.Angle(targetDir, agentTransform.forward);
+        bool blocked = false;
+        RaycastHit[] hits = Physics.RaycastAll(agentTransform.position, targetDir, Vector3.Distance(agentTransform.position, player.position));
+        for (int i = 0; i < hits.Length; i++)
+        {
+            if (!hits[i].collider.gameObject.name.StartsWith("Level") &&
+                hits[i].transform != player.transform && hits[i].transform != agentTransform)
+            {
+                blocked = true;
+            }
+        }
+        bool result = (!blocked && angle < fieldOfVision / 2);
+        return result;
+    }
+
+    [Task]
+    void Attack()
+    {
+        attack.Invoke();
+        Task.current.Succeed();
+    }
+
+    [Task]
+    void RedLight()
+    {
+        redLight.Invoke();
+        Task.current.Succeed();
+    }
+
+    [Task]
+    void BlueLight()
+    {
+        blueLight.Invoke();
+        Task.current.Succeed();
     }
 
     [Task]

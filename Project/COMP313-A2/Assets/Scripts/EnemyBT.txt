@@ -9,16 +9,7 @@ tree "Root"
 				tree "Patrol"
 
 tree "Patrol"
-	random
-		TargetPatrolPoint(0)
-		TargetPatrolPoint(1)
-		TargetPatrolPoint(2)
-		TargetPatrolPoint(3)
-		TargetPatrolPoint(4)
-		TargetPatrolPoint(5)
-		TargetPatrolPoint(6)
-		TargetPatrolPoint(7)
-
+	MoveToNextPoint()
 
 tree "Attack"
 	repeat
