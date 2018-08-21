@@ -14,14 +14,17 @@ tree "Patrol"
 tree "Attack"
 	repeat
 		fallback
-			fallback
-				sequence
-					InRange()
-					Attack()
-				sequence
-					InSight()
-					Chase()
-			tree "Search"
+			sequence
+				InSight()
+				InRange()
+				RedLight()
+				Attack()
+				Chase()
+				RealtimeWait(1.0)
+			sequence
+				BlueLight()
+				tree "Search"
+			
 
 tree "Search"
 	sequence
