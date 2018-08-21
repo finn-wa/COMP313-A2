@@ -8,11 +8,9 @@ public class EnemyTasks : MonoBehaviour
 {
     public bool paused = true;
     public Transform player;
-    public float runSpeed = 10;
+    public float patrolSpeed = 10;
     public Transform[] patrolPoints;
     NavMeshAgent agent;
-    Transform agentTransform;
-    Animator animator;
     float requiredProximity = 0.25f;
 
     void Start()
@@ -20,14 +18,12 @@ public class EnemyTasks : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.updatePosition = true;
         agent.updateRotation = true;
-        agent.speed = runSpeed;
-        agentTransform = GetComponent<Transform>();
-        animator = GetComponent<Animator>();
+        agent.speed = patrolSpeed;
     }
 
     void Update()
     {
-        animator.SetFloat("Forward", agent.desiredVelocity.magnitude, 0.1f, Time.deltaTime);
+        //animator.SetFloat("Forward", agent.desiredVelocity.magnitude, 0.1f, Time.deltaTime);
     }
 
     [Task]
@@ -72,7 +68,6 @@ public class EnemyTasks : MonoBehaviour
     void Die()
     {
         agent.isStopped = true;
-        animator.SetTrigger("DeathTrigger");
         Task.current.Succeed();
     }
 }
