@@ -1,0 +1,50 @@
+tree "Root"
+	while not Paused()
+		fallback
+			sequence
+				InSight()
+				tree "Attack"
+			sequence
+				HasArrived()
+				tree "Patrol"
+
+tree "Patrol"
+	random
+		TargetPatrolPoint(0)
+		TargetPatrolPoint(1)
+		TargetPatrolPoint(2)
+		TargetPatrolPoint(3)
+		TargetPatrolPoint(4)
+		TargetPatrolPoint(5)
+		TargetPatrolPoint(6)
+		TargetPatrolPoint(7)
+
+
+tree "Attack"
+	repeat
+		fallback
+			fallback
+				sequence
+					InRange()
+					Attack()
+				sequence
+					InSight()
+					Chase()
+			tree "Search"
+
+tree "Search"
+	sequence
+		SetTimer(7.0)
+		while not TimerFinished()
+			fallback
+				sequence 
+					InSight()
+					SetTimer(-1.0)
+				not
+					mute
+						fallback
+							sequence
+								TimeRemaining(3.5)
+								Chase()
+							sequence
+								Follow()

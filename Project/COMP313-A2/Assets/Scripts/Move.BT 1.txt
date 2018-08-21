@@ -1,0 +1,6 @@
+tree("Root")
+	sequence
+		MoveToPatrolPoint(0)
+		MoveToPatrolPoint(1)
+		MoveToPatrolPoint(2)
+		MoveToPatrolPoint(3)
