@@ -15,11 +15,8 @@ public class EnemyTasks : MonoBehaviour
     public float fieldOfVision = 60;
     public Transform[] patrolPoints;
     public UnityEvent attack;
-    public ParticleSystem redParticles;
-    public ParticleSystem blueParticles;
-    public Light spotLight;
-    public Light pointLight;
-    Light[] lights;
+    public UnityEvent redLight;
+    public UnityEvent blueLight;
     NavMeshAgent agent;
     Transform agentTransform;
     float timerEndsAt = 0f;
@@ -33,7 +30,6 @@ public class EnemyTasks : MonoBehaviour
         agent.updateRotation = true;
         agent.speed = patrolSpeed;
         agentTransform = GetComponent<Transform>();
-        lights = new Light[] {spotLight, pointLight};
     }
 
     [Task]
@@ -133,36 +129,21 @@ public class EnemyTasks : MonoBehaviour
     [Task]
     void RedLight()
     {
-        foreach (Light light in lights)
-        {
-            light.color = Color.red;
-        }
-        blueParticles.Stop();
-        redParticles.Play();
+        redLight.Invoke();
         Task.current.Succeed();
     }
 
     [Task]
     void BlueLight()
     {
-        foreach (Light light in lights)
-        {
-            light.color = Color.blue;
-        }
-        redParticles.Stop();
-        blueParticles.Play();
+        blueLight.Invoke();
         Task.current.Succeed();
     }
 
-    public void Disable()
+    [Task]
+    void Die()
     {
         agent.isStopped = true;
-        redParticles.Stop();
-        blueParticles.Stop();
-        foreach (Light light in lights)
-        {
-            light.color = Color.green;
-            light.intensity = 5;
-        }
+        Task.current.Succeed();
     }
 }
