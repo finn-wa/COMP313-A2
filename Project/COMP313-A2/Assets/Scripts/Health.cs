@@ -4,8 +4,10 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class Health : MonoBehaviour
-{    float health;
+{    
+    int health;
     public UnityEvent onDeath;
+    public RectTransform healthBar;
 
     // Use this for initialization
     void Start()
@@ -13,10 +15,15 @@ public class Health : MonoBehaviour
         health = 100;
     }
 
-    public void Damage(float amount)
+    public void Damage(int amount)
     {
         health -= amount;
-		print("Player health = "+health);
+        if (health < 0)
+        {
+            health = 0;
+        }
+        healthBar.sizeDelta = new Vector2(health, healthBar.sizeDelta.y);
+        print("Player health = "+health);
         if (health <= 0)
         {
             onDeath.Invoke();
