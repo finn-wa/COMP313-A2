@@ -23,6 +23,7 @@ public class Health : MonoBehaviour
             health = 0;
         }
         healthBar.sizeDelta = new Vector2(health, healthBar.sizeDelta.y);
+        print("Player health = "+health);
         if (health <= 0)
         {
             onDeath.Invoke();

@@ -1,9 +1,0 @@
-tree "Root"
-	fallback
-		sequence
-			InSight()
-			InRange()
-			RedLight()
-			Attack()
-			RealtimeWait(1.0)
-		BlueLight()
