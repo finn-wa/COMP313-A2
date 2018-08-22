@@ -1,4 +1,4 @@
-# COMP313-A2 - LABYRITNH
+# COMP313-A2 — LABYRINTH
 *Finn Welsford-Ackroyd and Emily Fung*
 
 ## Basic outline of game:  
