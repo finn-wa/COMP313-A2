@@ -1,12 +1,12 @@
-# COMP313-A2
+# COMP313-A2 - LABYRITNH
+*Finn Welsford-Ackroyd and Emily Fung*
 
-Basic outline of game:  
-* Maze-like level which the player has to reach the end of
-* Patrolling bots with cone of light representing field of vision
-* If the player enters the cone of light, the bots shoot the player. They will also stop patrolling and begin to follow the user (quite slowly)
-- If you sneak behind a bot you can disable it.
-- Potentially some kind of trail that the player leaves behind for the bots to follow  
-This boils down to these basic game mechanics for the player:
-- Movement (walk, run, crouch, jump)
-- Stealth (avoiding the cone of light)
-- Attack (disabling bots from behind)
+## Basic outline of game:  
+* The player's goal is to reach the top of a maze-like tower
+* The player must avoid patrolling enemies
+* The enemies are robots with a cone of light representing their field of vision
+* If the player enters the cone of light, the bots damage the player
+* They will also stop patrolling and chase the player
+* If the player sneaks behind an enemy they can press a button on its back to disable it
+
+## Game Architecture
